@@ -1,0 +1,36 @@
+# For a quick start check out our HTTP Requests collection (Tools|HTTP Client|Open HTTP Requests Collection).
+#
+# Following HTTP Request Live Templates are available:
+# * 'gtrp' and 'gtr' create a GET request with or without query parameters;
+# * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
+# * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
+
+POST http://localhost:8080/swapi/planets
+Content-Type: application/json
+
+{
+  "name": "Dagobah",
+  "climate": "murky",
+  "terrain": "swamp"
+}
+
+###
+
+GET http://localhost:8080/swapi/planets?name=marte
+Accept: application/json
+
+###
+
+GET http://localhost:8080/swapi/planets/20625a1a-5435-4307-8901-9c7a0cac2f82
+Accept: application/json
+
+###
+
+GET http://localhost:8080/swapi/planets/
+Accept: application/json
+
+###
+
+DELETE http://localhost:8080/swapi/planets/319a305a-e9d6-408e-934e-16e6cf9bb44d
+
+###

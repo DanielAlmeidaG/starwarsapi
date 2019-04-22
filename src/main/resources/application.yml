@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: StarWars REST API
+
+server:
+  port: 8080
+  servlet:
+    context-path: /swapi
+  http2:
+    enabled: true
+  compression:
+    enabled: true
+    mime-types: application/json
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file: starwarsapi.log
+
+---
+integrations:
+  swapi:
+    baseurl: "https://swapi.co/api/planets/"
+  http:
+    headers:
+      useragent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36"
