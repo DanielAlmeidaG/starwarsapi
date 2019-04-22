@@ -14,10 +14,13 @@ import java.io.IOException;
 @Configuration
 public class RestTemplateConfiguration {
 
+    private static final String USER_AGENT = "User-agent";
+    private static final String CURL = "curl/7.59.0";
+
     @Bean
     public RestTemplate createRestTemplate(RestTemplateBuilder builder) {
         RestTemplate restTemplate = builder.build();
-        restTemplate.getInterceptors().add(addRequestHeader("User-agent", "curl/7.59.0"));
+        restTemplate.getInterceptors().add(addRequestHeader(USER_AGENT, CURL));
         return restTemplate;
     }
 

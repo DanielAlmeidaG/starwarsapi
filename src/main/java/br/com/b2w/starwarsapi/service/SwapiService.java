@@ -25,9 +25,6 @@ public class SwapiService {
     @Value("${integrations.swapi.baseurl}")
     private URI swapiApi;
 
-    @Value("${integrations.http.headers.useragent}")
-    private String userAgent;
-
     private static final String QUERY_SEARCH = "?search=%s";
 
     private final RestTemplate restTemplate;
