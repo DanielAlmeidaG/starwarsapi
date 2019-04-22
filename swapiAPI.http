@@ -9,9 +9,9 @@ POST http://localhost:8080/swapi/planets
 Content-Type: application/json
 
 {
-  "name": "Dagobah",
-  "climate": "murky",
-  "terrain": "swamp"
+  "name": "Kamino",
+  "climate": "cold",
+  "terrain": "bad"
 }
 
 ###

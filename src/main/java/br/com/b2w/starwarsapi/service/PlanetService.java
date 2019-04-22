@@ -1,12 +1,12 @@
 package br.com.b2w.starwarsapi.service;
 
-import br.com.b2w.starwarsapi.exception.NotFoundException;
+import br.com.b2w.starwarsapi.exception.PlanetNotFoundException;
 import br.com.b2w.starwarsapi.exception.PlanetAlreadyInsertedException;
 import br.com.b2w.starwarsapi.model.Planet;
 import br.com.b2w.starwarsapi.model.SwapiPlanet;
 import br.com.b2w.starwarsapi.repository.PlanetRepository;
+import br.com.b2w.starwarsapi.util.MessageUtil;
 import lombok.AllArgsConstructor;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,12 +24,14 @@ public class PlanetService {
 
     private final SwapiService swapiService;
 
+    private final MessageUtil messageUtil;
+
     public Planet save(Planet planet) throws RestClientException {
 
         Optional<Planet> optionalPlanet = repository.findByNameIgnoreCase(planet.getName());
 
         if(optionalPlanet.isPresent())
-            throw new PlanetAlreadyInsertedException("Já existe um planeta cadastrado com o nome " + planet.getName());
+            throw new PlanetAlreadyInsertedException(messageUtil.getMessage("planet.name.already.registered", planet.getName()));
 
         SwapiPlanet swapiPlanet = swapiService.getSwapiPlanet(planet.getName());
         planet.setUri(swapiPlanet.getUrl());
@@ -58,7 +60,7 @@ public class PlanetService {
         Optional<Planet> optionalPlanet = repository.findByNameIgnoreCase(name);
 
         if(!optionalPlanet.isPresent())
-            throw new NotFoundException("Planeta " + name + " não cadastrado.");
+            throw new PlanetNotFoundException(messageUtil.getMessage("planet.name.not.registered", name));
 
         return Optional.of(getUpdatedPlanet(optionalPlanet));
     }
@@ -68,7 +70,7 @@ public class PlanetService {
         Optional<Planet> optionalPlanet = repository.findByUuid(uuid);
 
         if(!optionalPlanet.isPresent())
-            throw new NotFoundException("Planeta de ID " + uuid + " não cadastrado.");
+            throw new PlanetNotFoundException(messageUtil.getMessage("planet.id.not.registered", uuid));
 
         return Optional.of(getUpdatedPlanet(optionalPlanet));
     }

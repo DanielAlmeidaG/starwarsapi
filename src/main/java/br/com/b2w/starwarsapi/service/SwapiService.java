@@ -1,11 +1,13 @@
 package br.com.b2w.starwarsapi.service;
 
-import br.com.b2w.starwarsapi.exception.NotFoundException;
+import br.com.b2w.starwarsapi.exception.PlanetNotFoundException;
 import br.com.b2w.starwarsapi.model.SwapiPlanet;
 import br.com.b2w.starwarsapi.model.SwapiSearchResult;
+import br.com.b2w.starwarsapi.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.MessageSource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -14,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -26,52 +29,35 @@ public class SwapiService {
     private String userAgent;
 
     private static final String QUERY_SEARCH = "?search=%s";
-    private static final String USER_AGENT = "user-agent";
-    private static final String PARAMETERS = "parameters";
 
     private final RestTemplate restTemplate;
+    private final MessageUtil messageUtil;
 
     @Cacheable("SwapiPlanetsSearch")
     public SwapiPlanet getSwapiPlanet(String planetName) throws RestClientException {
 
         URI searchURI = URI.create(swapiApi + String.format(QUERY_SEARCH, planetName));
 
-        ResponseEntity<SwapiSearchResult> response =
-                restTemplate.exchange(searchURI, HttpMethod.GET, getHttpEntity(), SwapiSearchResult.class);
-
-        SwapiSearchResult searchResult = response.getBody();
+        SwapiSearchResult searchResult = restTemplate.getForObject(searchURI, SwapiSearchResult.class);
 
         if(searchResult == null || searchResult.getCount() == 0)
-            throw new NotFoundException("Planeta " + planetName + " não encontrado na swapi.");
+            throw new PlanetNotFoundException(messageUtil.getMessage("planet.swapi.not.found", planetName));
 
         return Arrays.stream(searchResult.getResults())
                 .filter(swapiPlanet -> planetName.equals(swapiPlanet.getName()))
                 .findAny()
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(PlanetNotFoundException::new);
     }
 
     @Cacheable("SwapiPlanetUri")
     public SwapiPlanet getSwapiPlanetByUri(URI uri) throws RestClientException {
 
-        ResponseEntity<SwapiPlanet> response =
-                restTemplate.exchange(uri, HttpMethod.GET, getHttpEntity(), SwapiPlanet.class);
-
-        SwapiPlanet swapiPlanet = response.getBody();
+        SwapiPlanet swapiPlanet = restTemplate.getForObject(uri, SwapiPlanet.class);
 
         if(swapiPlanet == null)
-            throw new NotFoundException("");
+            throw new PlanetNotFoundException(messageUtil.getMessage("planet.swapi.not.found", uri));
 
         return swapiPlanet;
     }
 
-    private HttpEntity<String> getHttpEntity() {
-        return new HttpEntity<>(PARAMETERS, getHttpHeaders());
-    }
-
-    private HttpHeaders getHttpHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        headers.add(USER_AGENT, userAgent);
-        return headers;
-    }
 }

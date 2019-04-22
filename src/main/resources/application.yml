@@ -19,6 +19,12 @@ logging:
   file: starwarsapi.log
 
 ---
+spring:
+  profiles: default
+  data:
+    mongodb:
+      uri: mongodb+srv://starwars:Do36dittJbfjTPcm@cluster0-avlwm.mongodb.net/starwarsapi?retryWrites=true
+
 integrations:
   swapi:
     baseurl: "https://swapi.co/api/planets/"

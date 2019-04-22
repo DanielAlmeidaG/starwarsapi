@@ -14,11 +14,11 @@ public class CacheConfiguration {
 
     @Bean
     public CacheManager cacheManager() {
-        return new EhCacheCacheManager(ehCacheCacheManager().getObject());
+        return new EhCacheCacheManager(ehCacheManager().getObject());
     }
 
     @Bean
-    public EhCacheManagerFactoryBean ehCacheCacheManager() {
+    public EhCacheManagerFactoryBean ehCacheManager() {
         EhCacheManagerFactoryBean cmfb = new EhCacheManagerFactoryBean();
         cmfb.setConfigLocation(new ClassPathResource("ehcache.xml"));
         cmfb.setShared(true);

@@ -10,8 +10,6 @@ import java.net.URI;
 public class SwapiPlanet {
 
     private String name;
-    private String climate;
-    private String terrain;
     private URI[] films;
     private URI url;
 

@@ -5,13 +5,14 @@ import org.springframework.web.client.HttpClientErrorException;
 
 public class PlanetAlreadyInsertedException extends HttpClientErrorException {
 
-    private static final long serialVersionUID = -4844548810264075678L;
+    private static final long serialVersionUID = -7280209225723855112L;
 
     public PlanetAlreadyInsertedException() {
         super(HttpStatus.CONFLICT);
     }
 
-    public PlanetAlreadyInsertedException(String message) {
-        super(HttpStatus.CONFLICT, message);
+    public PlanetAlreadyInsertedException(String statusText) {
+        super(HttpStatus.CONFLICT, statusText);
     }
+
 }
