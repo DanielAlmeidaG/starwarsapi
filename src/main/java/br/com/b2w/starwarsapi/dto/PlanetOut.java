@@ -11,5 +11,5 @@ public class PlanetOut {
     private String name;
     private String climate;
     private String terrain;
-    private int amountMoviesApeared;
+    private int numberAppearancesFilms;
 }
