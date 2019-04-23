@@ -1,13 +1,13 @@
 package br.com.b2w.starwarsapi.service;
 
-import br.com.b2w.starwarsapi.exception.PlanetNotFoundException;
 import br.com.b2w.starwarsapi.exception.PlanetAlreadyInsertedException;
+import br.com.b2w.starwarsapi.exception.PlanetNotFoundException;
 import br.com.b2w.starwarsapi.model.Planet;
 import br.com.b2w.starwarsapi.model.SwapiPlanet;
 import br.com.b2w.starwarsapi.repository.PlanetRepository;
 import br.com.b2w.starwarsapi.util.MessageUtil;
 import lombok.AllArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class PlanetService {
 
@@ -28,6 +29,8 @@ public class PlanetService {
 
     public Planet save(Planet planet) throws RestClientException {
 
+        log.info("Trying to register the planet {}", planet.getName());
+
         Optional<Planet> optionalPlanet = repository.findByNameIgnoreCase(planet.getName());
 
         if(optionalPlanet.isPresent())
@@ -38,46 +41,73 @@ public class PlanetService {
 
         Planet savedPlanet = repository.save(planet);
 
-        savedPlanet.setAmountMoviesApeared(swapiPlanet.getAmountMoviesApeared());
+        savedPlanet.setNumberAppearancesFilms(swapiPlanet.getNumberAppearancesFilms());
+
+        log.info("Planet {} registered successfully", savedPlanet);
 
         return savedPlanet;
     }
 
-    public void delete(Planet planet) {
-        repository.delete(planet);
-    }
+    public void delete(UUID uuid) {
 
-    public Page<Planet> findAll(Pageable pageable) {
-        Page<Planet> allPlanets = repository.findAll(pageable);
+        log.info("Trying to delete the planet which ID is {}", uuid);
 
-        allPlanets.stream().forEach(planet -> getUpdatedPlanet(Optional.of(planet)));
-
-        return allPlanets;
-    }
-
-    @Cacheable("findByName")
-    public Optional<Planet> findByName(String name) {
-        Optional<Planet> optionalPlanet = repository.findByNameIgnoreCase(name);
-
-        if(!optionalPlanet.isPresent())
-            throw new PlanetNotFoundException(messageUtil.getMessage("planet.name.not.registered", name));
-
-        return Optional.of(getUpdatedPlanet(optionalPlanet));
-    }
-
-    @Cacheable("findByUuid")
-    public Optional<Planet> findByUuid(UUID uuid) {
         Optional<Planet> optionalPlanet = repository.findByUuid(uuid);
 
         if(!optionalPlanet.isPresent())
             throw new PlanetNotFoundException(messageUtil.getMessage("planet.id.not.registered", uuid));
 
-        return Optional.of(getUpdatedPlanet(optionalPlanet));
+        repository.delete(optionalPlanet.get());
+
+        log.info("Planet {} deleted successfully", uuid);
     }
 
-    private Planet getUpdatedPlanet(Optional<Planet> optionalPlanet) {
-        Planet planet = optionalPlanet.get();
-        planet.setAmountMoviesApeared(swapiService.getSwapiPlanetByUri(planet.getUri()).getAmountMoviesApeared());
+    public Page<Planet> findAll(Pageable pageable) {
+        Page<Planet> allPlanets = repository.findAll(pageable);
+
+        allPlanets.stream().forEach(this::getUpdatedPlanet);
+
+        return allPlanets;
+    }
+
+    public Planet findByName(String name) {
+
+        log.info("Searching by name the planet {} on the database", name);
+
+        Optional<Planet> optionalPlanet = repository.findByNameIgnoreCase(name);
+
+        if(!optionalPlanet.isPresent())
+            throw new PlanetNotFoundException(messageUtil.getMessage("planet.name.not.registered", name));
+
+        Planet planet = getUpdatedPlanet(optionalPlanet.get());
+
+        log.info("Planet found: {}", planet);
+
+        return planet;
+    }
+
+    public Planet findByUuid(UUID uuid) {
+
+        log.info("Searching the planet which ID is {} on the database", uuid);
+
+        Optional<Planet> optionalPlanet = repository.findByUuid(uuid);
+
+        if(!optionalPlanet.isPresent())
+            throw new PlanetNotFoundException(messageUtil.getMessage("planet.id.not.registered", uuid));
+
+        Planet planet = getUpdatedPlanet(optionalPlanet.get());
+
+        log.info("Planet found: {}", planet);
+
+        return planet;
+    }
+
+    private Planet getUpdatedPlanet(Planet planet) {
+        planet.setNumberAppearancesFilms(swapiService.getSwapiPlanetByUri(planet.getUri()).getNumberAppearancesFilms());
+
+        log.info("Number of appearances in movies for planet {} update to {}",
+                planet.getName(), planet.getNumberAppearancesFilms());
+
         return planet;
     }
 

@@ -1,25 +1,26 @@
 package br.com.b2w.starwarsapi.service;
 
+import br.com.b2w.starwarsapi.exception.IntegrationException;
 import br.com.b2w.starwarsapi.exception.PlanetNotFoundException;
 import br.com.b2w.starwarsapi.model.SwapiPlanet;
 import br.com.b2w.starwarsapi.model.SwapiSearchResult;
 import br.com.b2w.starwarsapi.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.MessageSource;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Locale;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
+@CacheConfig(cacheNames = "swapi")
 public class SwapiService {
 
     @Value("${integrations.swapi.baseurl}")
@@ -30,31 +31,63 @@ public class SwapiService {
     private final RestTemplate restTemplate;
     private final MessageUtil messageUtil;
 
-    @Cacheable("SwapiPlanetsSearch")
-    public SwapiPlanet getSwapiPlanet(String planetName) throws RestClientException {
+    @Cacheable
+    public SwapiPlanet getSwapiPlanet(String planetName) throws IntegrationException, PlanetNotFoundException {
 
-        URI searchURI = URI.create(swapiApi + String.format(QUERY_SEARCH, planetName));
+        try {
 
-        SwapiSearchResult searchResult = restTemplate.getForObject(searchURI, SwapiSearchResult.class);
+            log.info("Searching the planet {} in the swapi", planetName);
 
-        if(searchResult == null || searchResult.getCount() == 0)
-            throw new PlanetNotFoundException(messageUtil.getMessage("planet.swapi.not.found", planetName));
+            SwapiSearchResult searchResult =
+                    restTemplate.getForObject(getSearchURI(planetName), SwapiSearchResult.class);
 
-        return Arrays.stream(searchResult.getResults())
-                .filter(swapiPlanet -> planetName.equals(swapiPlanet.getName()))
-                .findAny()
-                .orElseThrow(PlanetNotFoundException::new);
+            if(searchResult == null || searchResult.getCount() == 0)
+                throw new PlanetNotFoundException(messageUtil.getMessage("swapi.planet.not.found", planetName));
+
+            SwapiPlanet swapiPlanet = Arrays.stream(searchResult.getResults())
+                    .filter(planet -> planetName.equals(planet.getName()))
+                    .findFirst()
+                    .orElseThrow(PlanetNotFoundException::new);
+
+            log.info("Planet recovered: {}", swapiPlanet);
+
+            return swapiPlanet;
+
+        } catch (RestClientException rce) {
+            String errorMsg =
+                    messageUtil.getMessage("swapi.integration.exception", rce.getLocalizedMessage(), getSearchURI(planetName));
+            log.error(errorMsg);
+            throw new IntegrationException(errorMsg);
+        }
+
     }
 
-    @Cacheable("SwapiPlanetUri")
-    public SwapiPlanet getSwapiPlanetByUri(URI uri) throws RestClientException {
+    @Cacheable
+    public SwapiPlanet getSwapiPlanetByUri(URI uri) throws IntegrationException, PlanetNotFoundException {
 
-        SwapiPlanet swapiPlanet = restTemplate.getForObject(uri, SwapiPlanet.class);
+        try {
 
-        if(swapiPlanet == null)
-            throw new PlanetNotFoundException(messageUtil.getMessage("planet.swapi.not.found", uri));
+            log.info("Searching the planet {} in the swapi", uri);
 
-        return swapiPlanet;
+            SwapiPlanet swapiPlanet = restTemplate.getForObject(uri, SwapiPlanet.class);
+
+            if(swapiPlanet == null)
+                throw new PlanetNotFoundException(messageUtil.getMessage("swapi.planet.not.found", uri.toString()));
+
+            log.info("Planet recovered: {}", swapiPlanet);
+
+            return swapiPlanet;
+
+        } catch (RestClientException rce) {
+            String errorMsg =
+                    messageUtil.getMessage("swapi.integration.exception", rce.getLocalizedMessage(), uri.toString());
+            log.error(errorMsg);
+            throw new IntegrationException(errorMsg);
+        }
+
     }
 
+    private URI getSearchURI(String planetName) {
+        return URI.create(swapiApi + String.format(QUERY_SEARCH, planetName));
+    }
 }

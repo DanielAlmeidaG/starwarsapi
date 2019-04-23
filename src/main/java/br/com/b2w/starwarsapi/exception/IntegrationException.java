@@ -1,13 +1,13 @@
 package br.com.b2w.starwarsapi.exception;
 
-public class PlanetNotFoundException extends RuntimeException {
+public class IntegrationException extends RuntimeException {
 
     private static final long serialVersionUID = -7280209225723855022L;
 
-    public PlanetNotFoundException() {
+    public IntegrationException() {
     }
 
-    public PlanetNotFoundException(String message) {
+    public IntegrationException(String message) {
         super(message);
     }
 }

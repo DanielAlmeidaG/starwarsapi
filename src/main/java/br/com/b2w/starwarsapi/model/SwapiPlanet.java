@@ -2,10 +2,12 @@ package br.com.b2w.starwarsapi.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.ToString;
 
 import java.net.URI;
 
 @Data
+@ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SwapiPlanet {
 
@@ -13,7 +15,7 @@ public class SwapiPlanet {
     private URI[] films;
     private URI url;
 
-    public int getAmountMoviesApeared() {
+    public int getNumberAppearancesFilms() {
         return this.getFilms() == null ? 0 : this.getFilms().length;
     }
 }

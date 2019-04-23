@@ -1,5 +1,6 @@
 package br.com.b2w.starwarsapi.exception;
 
+import com.weddini.throttling.ThrottlingException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(InternalServerErrorException.class)
-    public ResponseEntity<CustomExceptionResponse> customHandleInternalServerError(Exception ex) {
+    public ResponseEntity<CustomExceptionResponse> customHandleInternalServerErrorException(Exception ex) {
         return new ResponseEntity<>(getCustomExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -42,14 +43,24 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(getCustomExceptionResponse(HttpStatus.SERVICE_UNAVAILABLE, ex), HttpStatus.SERVICE_UNAVAILABLE);
     }
 
+    @ExceptionHandler(ThrottlingException.class)
+    public ResponseEntity<CustomExceptionResponse> customHandleThrottlingException(Exception ex) {
+        return new ResponseEntity<>(getCustomExceptionResponse(HttpStatus.TOO_MANY_REQUESTS, ex), HttpStatus.TOO_MANY_REQUESTS);
+    }
+
     @ExceptionHandler(PlanetNotFoundException.class)
-    public ResponseEntity<CustomExceptionResponse> customHandlePlanetNotFound(Exception ex) {
+    public ResponseEntity<CustomExceptionResponse> customHandlePlanetNotFoundException(Exception ex) {
         return new ResponseEntity<>(getCustomExceptionResponse(HttpStatus.NOT_FOUND, ex), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(PlanetAlreadyInsertedException.class)
-    public ResponseEntity<CustomExceptionResponse> customHandlePlanetAlreadyInserted(Exception ex) {
+    public ResponseEntity<CustomExceptionResponse> customHandlePlanetAlreadyInsertedException(Exception ex) {
         return new ResponseEntity<>(getCustomExceptionResponse(HttpStatus.CONFLICT, ex), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(IntegrationException.class)
+    public ResponseEntity<CustomExceptionResponse> customHandleIntegrationException(Exception ex) {
+        return new ResponseEntity<>(getCustomExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override

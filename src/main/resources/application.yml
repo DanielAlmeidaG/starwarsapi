@@ -1,6 +1,12 @@
 spring:
   application:
     name: StarWars REST API
+  data:
+    mongodb:
+      uri: mongodb+srv://starwars:Do36dittJbfjTPcm@cluster0-avlwm.mongodb.net/starwarsapi?retryWrites=true
+  output:
+    ansi:
+      enabled: detect
 
 server:
   port: 8080
@@ -14,16 +20,13 @@ server:
 
 logging:
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    console: "%d %-5level %logger : %msg%n"
+    file: "%d %-5level [%thread] %logger : %msg%n"
+  level:
+    root: info
+    org.springframework.web: debug
+    org.mongodb.driver: info
   file: starwarsapi.log
-
----
-spring:
-  profiles: default
-  data:
-    mongodb:
-      uri: mongodb+srv://starwars:Do36dittJbfjTPcm@cluster0-avlwm.mongodb.net/starwarsapi?retryWrites=true
 
 integrations:
   swapi:

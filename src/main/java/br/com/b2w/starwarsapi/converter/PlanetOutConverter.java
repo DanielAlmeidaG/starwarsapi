@@ -16,7 +16,7 @@ public class PlanetOutConverter implements Function<Planet, PlanetOut> {
         planetOut.setName(planet.getName());
         planetOut.setClimate(planet.getClimate());
         planetOut.setTerrain(planet.getTerrain());
-        planetOut.setAmountMoviesApeared(planet.getAmountMoviesApeared());
+        planetOut.setAmountMoviesApeared(planet.getNumberAppearancesFilms());
         return planetOut;
     }
 }

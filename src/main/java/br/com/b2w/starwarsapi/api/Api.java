@@ -1,6 +1,7 @@
 package br.com.b2w.starwarsapi.api;
 
 import br.com.b2w.starwarsapi.model.Codded;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -8,7 +9,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
+@SuppressWarnings("unchecked")
 public abstract class Api {
 
     private static final String UUID = "/{uuid}";
@@ -17,11 +20,9 @@ public abstract class Api {
         return ResponseEntity.noContent().build();
     }
 
-    protected <T extends Object> ResponseEntity ok(T resource) {
-        return ResponseEntity.ok(resource);
-    }
-
     protected <T extends Object> ResponseEntity ok(T resource, Function converter) {
+        if(resource instanceof Page)
+            return ResponseEntity.ok(((Page) resource).stream().map(converter).collect(Collectors.toList()));
         return ResponseEntity.ok(converter.apply(resource));
     }
 

@@ -1,9 +1,6 @@
 package br.com.b2w.starwarsapi.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -15,9 +12,10 @@ import java.util.UUID;
 
 @Data
 @Builder
-@Document(collection = "planets")
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Document(collection = "planets")
 public class Planet implements Codded {
 
     @Id
@@ -29,7 +27,7 @@ public class Planet implements Codded {
     private String climate;
     private String terrain;
     @Transient
-    private int amountMoviesApeared;
+    private int numberAppearancesFilms;
     private URI uri;
 
 }

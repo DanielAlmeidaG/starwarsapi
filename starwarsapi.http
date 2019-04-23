@@ -9,19 +9,19 @@ POST http://localhost:8080/swapi/planets
 Content-Type: application/json
 
 {
-  "name": "Kamino",
-  "climate": "cold",
+  "name": "Terra",
+  "climate": "poor",
   "terrain": "bad"
 }
 
 ###
 
-GET http://localhost:8080/swapi/planets?name=marte
+GET http://localhost:8080/swapi/planets/search?name=Kamino
 Accept: application/json
 
 ###
 
-GET http://localhost:8080/swapi/planets/20625a1a-5435-4307-8901-9c7a0cac2f82
+GET http://localhost:8080/swapi/planets/0c146a57-929b-4d45-bf79-e29235b8134e
 Accept: application/json
 
 ###
@@ -31,6 +31,6 @@ Accept: application/json
 
 ###
 
-DELETE http://localhost:8080/swapi/planets/319a305a-e9d6-408e-934e-16e6cf9bb44d
+DELETE http://localhost:8080/swapi/planets/0c146a57-929b-4d45-bf79-e29235b8134e
 
 ###

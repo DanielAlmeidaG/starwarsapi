@@ -4,10 +4,10 @@ import br.com.b2w.starwarsapi.converter.PlanetInConverter;
 import br.com.b2w.starwarsapi.converter.PlanetOutConverter;
 import br.com.b2w.starwarsapi.dto.PlanetIn;
 import br.com.b2w.starwarsapi.dto.PlanetOut;
-import br.com.b2w.starwarsapi.exception.PlanetNotFoundException;
-import br.com.b2w.starwarsapi.model.Planet;
 import br.com.b2w.starwarsapi.service.PlanetService;
 import br.com.b2w.starwarsapi.util.MessageUtil;
+import com.weddini.throttling.Throttling;
+import com.weddini.throttling.ThrottlingType;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,11 +19,11 @@ import javax.validation.Valid;
 import javax.ws.rs.BadRequestException;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("unchecked")
-@RestController
 @AllArgsConstructor
+@RestController
 @RequestMapping("/planets")
 public class PlanetApi extends Api {
 
@@ -33,44 +33,45 @@ public class PlanetApi extends Api {
     private final MessageUtil messageUtil;
 
     @GetMapping(path = "/search", params = "name")
+    @Throttling(type = ThrottlingType.RemoteAddr, timeUnit = TimeUnit.MINUTES, limit = 100)
     public ResponseEntity<PlanetOut> findByName(@RequestParam(value="name") String name) {
 
         if(name==null || name.isEmpty())
             throw new BadRequestException(messageUtil.getMessage("planet.name.required"));
 
-        Planet planet = service.findByName(name).orElseThrow(PlanetNotFoundException::new);
-        return ok(planet, outConverter);
+        return ok(service.findByName(name), outConverter);
 
     }
 
     @GetMapping("/{uuid}")
+    @Throttling(type = ThrottlingType.RemoteAddr, timeUnit = TimeUnit.MINUTES, limit = 100)
     public ResponseEntity<PlanetOut> findById(@PathVariable UUID uuid) {
 
-        Planet planet = service.findByUuid(uuid).orElseThrow(PlanetNotFoundException::new);
-        return ok(planet, outConverter);
+        return ok(service.findByUuid(uuid), outConverter);
 
     }
 
     @GetMapping
+    @Throttling(type = ThrottlingType.RemoteAddr, timeUnit = TimeUnit.HOURS, limit = 1000)
     public ResponseEntity<List<PlanetOut>> findAll(@PageableDefault Pageable pageable) {
 
-        List<PlanetOut> planets = service.findAll(pageable).stream().map(outConverter).collect(Collectors.toList());
-        return ok(planets);
+        return ok(service.findAll(pageable), outConverter);
 
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Throttling(type = ThrottlingType.RemoteAddr, timeUnit = TimeUnit.DAYS, limit = 1000)
     public ResponseEntity<PlanetOut> save(@RequestBody @Valid PlanetIn planetIn) {
 
-        Planet planet = service.save(inConverter.apply(planetIn));
-        return created(planet, outConverter);
+        return created(service.save(inConverter.apply(planetIn)), outConverter);
 
     }
 
     @DeleteMapping("/{uuid}")
+    @Throttling(type = ThrottlingType.RemoteAddr, timeUnit = TimeUnit.DAYS, limit = 1000)
     public ResponseEntity<?> delete(@PathVariable UUID uuid) {
 
-        service.delete(service.findByUuid(uuid).orElseThrow(PlanetNotFoundException::new));
+        service.delete(uuid);
         return noContent();
 
     }
