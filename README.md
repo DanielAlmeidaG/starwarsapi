@@ -28,7 +28,7 @@
 
 - Como parte do pacote de infra estrutura foi implementado um mecanismo de log eficiente em cada requisição efetuada para a API utilizando o provider logback.
 
-- A fim de diminuir a verbosidade e legibilidade do código foi utilizada a biblioteca lombok que provê a criação de getters, setters, constructors e outras facilidades de forma implícita.
+- A fim de diminuir a verbosidade e melhorar a legibilidade do código foi utilizada a biblioteca lombok que provê a criação de getters, setters, constructors e outras facilidades de forma implícita.
 
 
 ## API endpoints
