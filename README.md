@@ -80,9 +80,17 @@ Ex: `{"id":"5aebc67ce1011035d8c31c0b","name":"Naboo","climate":"temperate","terr
 
 ## Executando a app  
 
-Uma vez que o código da aplicação disponível em uma pasta local, entrar no diretório onde está o pom.xml e rodar os seguintes comandos:
+#### Pré-Requisitos
 
-**rodar a aplicação:** `mvnw spring-boot:run`
+- Java 8 instalado na máquina;
+- Variável de ambiente JAVA_HOME configurada e apontando para o JDK do Java 8;
+- Git instalado na máquina 
+
+**clonar a aplicação** `git clone https://github.com/VitorMarques/starwarsapi.git`
+
+Uma vez que o código da aplicação disponível rodar os seguintes comandos:
+
+**rodar a aplicação:** `cd starswarsapi && mvnw spring-boot:run`
 
 ## Executando os testes de integração
 
