@@ -71,9 +71,6 @@ public class SwapiService {
 
             SwapiPlanet swapiPlanet = restTemplate.getForObject(uri, SwapiPlanet.class);
 
-            if(swapiPlanet == null)
-                throw new PlanetNotFoundException(messageUtil.getMessage("swapi.planet.not.found", uri.toString()));
-
             log.info("Planet recovered: {}", swapiPlanet);
 
             return swapiPlanet;

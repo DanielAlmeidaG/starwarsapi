@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: StarWars REST API - Test
+  data:
+    mongodb:
+      uri: mongodb+srv://starwars:Do36dittJbfjTPcm@cluster0-avlwm.mongodb.net/starwarsapitest?retryWrites=true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /swapi
+  http2:
+    enabled: true
+  compression:
+    enabled: true
+    mime-types: application/json
+
+integrations:
+  starwarsapi:
+    baseurl: "http://localhost:8080/swapi/planets/"
+  swapi:
+    baseurl: "https://swapi.co/api/planets/"

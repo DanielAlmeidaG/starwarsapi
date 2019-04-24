@@ -1,5 +1,6 @@
 package br.com.b2w.starwarsapi.service;
 
+import br.com.b2w.starwarsapi.exception.IntegrationException;
 import br.com.b2w.starwarsapi.exception.PlanetAlreadyInsertedException;
 import br.com.b2w.starwarsapi.exception.PlanetNotFoundException;
 import br.com.b2w.starwarsapi.model.Planet;
@@ -11,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -27,7 +27,7 @@ public class PlanetService {
 
     private final MessageUtil messageUtil;
 
-    public Planet save(Planet planet) throws RestClientException {
+    public Planet save(Planet planet) throws PlanetAlreadyInsertedException {
 
         log.info("Trying to register the planet {}", planet.getName());
 
@@ -48,7 +48,7 @@ public class PlanetService {
         return savedPlanet;
     }
 
-    public void delete(UUID uuid) {
+    public void delete(UUID uuid) throws PlanetNotFoundException {
 
         log.info("Trying to delete the planet which ID is {}", uuid);
 
@@ -70,7 +70,7 @@ public class PlanetService {
         return allPlanets;
     }
 
-    public Planet findByName(String name) {
+    public Planet findByName(String name) throws PlanetNotFoundException {
 
         log.info("Searching by name the planet {} on the database", name);
 
@@ -86,7 +86,7 @@ public class PlanetService {
         return planet;
     }
 
-    public Planet findByUuid(UUID uuid) {
+    public Planet findByUuid(UUID uuid) throws PlanetNotFoundException {
 
         log.info("Searching the planet which ID is {} on the database", uuid);
 

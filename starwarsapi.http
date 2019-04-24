@@ -9,14 +9,14 @@ POST http://localhost:8080/swapi/planets
 Content-Type: application/json
 
 {
-  "name": "Terra",
+  "name": "Alderaan",
   "climate": "poor",
   "terrain": "bad"
 }
 
 ###
 
-GET http://localhost:8080/swapi/planets/search?name=Kamino
+GET http://localhost:8080/swapi/planets/search?name=Alderaan
 Accept: application/json
 
 ###
@@ -31,6 +31,6 @@ Accept: application/json
 
 ###
 
-DELETE http://localhost:8080/swapi/planets/0c146a57-929b-4d45-bf79-e29235b8134e
+DELETE http://localhost:8080/swapi/planets/706e9a17-58ff-4743-9c86-e390842f76d5
 
 ###

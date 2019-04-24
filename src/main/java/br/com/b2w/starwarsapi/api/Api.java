@@ -20,13 +20,13 @@ public abstract class Api {
         return ResponseEntity.noContent().build();
     }
 
-    protected <T extends Object> ResponseEntity ok(T resource, Function converter) {
+    protected <T extends Object> ResponseEntity ok(@NonNull T resource, @NonNull Function converter) {
         if(resource instanceof Page)
             return ResponseEntity.ok(((Page) resource).stream().map(converter).collect(Collectors.toList()));
         return ResponseEntity.ok(converter.apply(resource));
     }
 
-    protected <T extends Codded> ResponseEntity created(T resource, Function converter) {
+    protected <T extends Codded> ResponseEntity created(@NonNull T resource, @NonNull Function converter) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .location(getResourceLocation(resource))
