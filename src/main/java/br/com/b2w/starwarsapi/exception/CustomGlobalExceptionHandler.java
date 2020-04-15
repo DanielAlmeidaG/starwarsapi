@@ -1,6 +1,6 @@
 package br.com.b2w.starwarsapi.exception;
 
-import com.weddini.throttling.ThrottlingException;
+//import com.weddini.throttling.ThrottlingException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +23,10 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(InternalServerErrorException.class)
+    /*@ExceptionHandler(InternalServerErrorException.class)
     public ResponseEntity<CustomExceptionResponse> customHandleInternalServerErrorException(Exception ex) {
         return new ResponseEntity<>(getCustomExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    }*/
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<CustomExceptionResponse> customHandleIllegalArgumentException(Exception ex) {
@@ -43,10 +43,10 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(getCustomExceptionResponse(HttpStatus.SERVICE_UNAVAILABLE, ex), HttpStatus.SERVICE_UNAVAILABLE);
     }
 
-    @ExceptionHandler(ThrottlingException.class)
+    /*@ExceptionHandler(ThrottlingException.class)
     public ResponseEntity<CustomExceptionResponse> customHandleThrottlingException(Exception ex) {
         return new ResponseEntity<>(getCustomExceptionResponse(HttpStatus.TOO_MANY_REQUESTS, ex), HttpStatus.TOO_MANY_REQUESTS);
-    }
+    }*/
 
     @ExceptionHandler(PlanetNotFoundException.class)
     public ResponseEntity<CustomExceptionResponse> customHandlePlanetNotFoundException(Exception ex) {

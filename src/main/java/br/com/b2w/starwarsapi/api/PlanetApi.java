@@ -6,8 +6,8 @@ import br.com.b2w.starwarsapi.dto.PlanetIn;
 import br.com.b2w.starwarsapi.dto.PlanetOut;
 import br.com.b2w.starwarsapi.service.PlanetService;
 import br.com.b2w.starwarsapi.util.MessageUtil;
-import com.weddini.throttling.Throttling;
-import com.weddini.throttling.ThrottlingType;
+//import com.weddini.throttling.Throttling;
+//import com.weddini.throttling.ThrottlingType;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -33,7 +33,7 @@ public class PlanetApi extends Api {
     private final MessageUtil messageUtil;
 
     @GetMapping(path = "/search", params = "name")
-    @Throttling(type = ThrottlingType.RemoteAddr, timeUnit = TimeUnit.MINUTES, limit = 100)
+    //@Throttling(type = ThrottlingType.RemoteAddr, timeUnit = TimeUnit.MINUTES, limit = 100)
     public ResponseEntity<PlanetOut> findByName(@RequestParam(value="name") String name) {
 
         if(name==null || name.isEmpty())
@@ -44,7 +44,7 @@ public class PlanetApi extends Api {
     }
 
     @GetMapping("/{uuid}")
-    @Throttling(type = ThrottlingType.RemoteAddr, timeUnit = TimeUnit.MINUTES, limit = 100)
+    //@Throttling(type = ThrottlingType.RemoteAddr, timeUnit = TimeUnit.MINUTES, limit = 100)
     public ResponseEntity<PlanetOut> findById(@PathVariable UUID uuid) {
 
         return ok(service.findByUuid(uuid), outConverter);
@@ -52,7 +52,7 @@ public class PlanetApi extends Api {
     }
 
     @GetMapping
-    @Throttling(type = ThrottlingType.RemoteAddr, timeUnit = TimeUnit.HOURS, limit = 1000)
+    //@Throttling(type = ThrottlingType.RemoteAddr, timeUnit = TimeUnit.HOURS, limit = 1000)
     public ResponseEntity<List<PlanetOut>> findAll(@PageableDefault Pageable pageable) {
 
         return ok(service.findAll(pageable), outConverter);
@@ -60,7 +60,7 @@ public class PlanetApi extends Api {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Throttling(type = ThrottlingType.RemoteAddr, timeUnit = TimeUnit.DAYS, limit = 1000)
+    //@Throttling(type = ThrottlingType.RemoteAddr, timeUnit = TimeUnit.DAYS, limit = 1000)
     public ResponseEntity<PlanetOut> save(@RequestBody @Valid PlanetIn planetIn) {
 
         return created(service.save(inConverter.apply(planetIn)), outConverter);
@@ -68,7 +68,7 @@ public class PlanetApi extends Api {
     }
 
     @DeleteMapping("/{uuid}")
-    @Throttling(type = ThrottlingType.RemoteAddr, timeUnit = TimeUnit.DAYS, limit = 1000)
+    //@Throttling(type = ThrottlingType.RemoteAddr, timeUnit = TimeUnit.DAYS, limit = 1000)
     public ResponseEntity<?> delete(@PathVariable UUID uuid) {
 
         service.delete(uuid);
